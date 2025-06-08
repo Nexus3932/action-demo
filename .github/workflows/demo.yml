@@ -1,25 +1,25 @@
 name: 打包React项目
 on: push
 
-permissions:
-  contents: write
-
 jobs:
-  npm-build:
+  deploy:
     name: npm-build工作
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: 读取仓库内容😊
         uses: actions/checkout@v4
 
-      - name: 安装依赖↓和项目打包📦
-        run: |
-          npm install
-          npm run build
-
-      - name: 部署🚀
-        if: github.ref == 'refs/heads/main'
-        env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          curl "$deploy_url"
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ${{ secrets.APP_DIR }}
+            git pull
+            npm install
+            npm run build
+            pm2 start npm --name "demo-frontend-app" -- start
