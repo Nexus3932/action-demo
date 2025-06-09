@@ -22,6 +22,8 @@ jobs:
             mkdir -p ${{ secrets.APP_DIR }}
             cd ${{ secrets.APP_DIR }}
             git pull
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             npm install
             npm run build
-            pm2 start npm --name "demo-frontend-app" -- start
+            mv ./dist/* /opt/ngx/html/
