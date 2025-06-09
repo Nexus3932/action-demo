@@ -15,9 +15,11 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
+            mkdir -p ${{ secrets.APP_DIR }}
             cd ${{ secrets.APP_DIR }}
             git pull
             npm install
